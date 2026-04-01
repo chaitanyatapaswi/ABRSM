@@ -1,0 +1,1770 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ABRSM Grade 5 Music Theory — Exam Preparation</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Crimson+Pro:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Courier+Prime:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #1a1208;
+    --parchment: #f5f0e8;
+    --cream: #faf7f2;
+    --gold: #b8860b;
+    --gold-light: #d4a820;
+    --gold-pale: #f0e0a0;
+    --staff: #8b7355;
+    --red-accent: #8b1a1a;
+    --deep-blue: #1a2744;
+    --mid-blue: #2c3e6b;
+    --success: #2d6a4f;
+    --fail: #8b1a1a;
+    --border: rgba(184,134,11,0.3);
+    --shadow: rgba(26,18,8,0.15);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Crimson Pro', Georgia, serif;
+    background: var(--ink);
+    color: var(--parchment);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ─── STAFF LINES BACKGROUND ─── */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background:
+      repeating-linear-gradient(
+        to bottom,
+        transparent 0px,
+        transparent 18px,
+        rgba(184,134,11,0.06) 18px,
+        rgba(184,134,11,0.06) 19px
+      );
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* ─── SCREENS ─── */
+  .screen { display: none; position: relative; z-index: 1; min-height: 100vh; }
+  .screen.active { display: flex; flex-direction: column; }
+
+  /* ─── HOME SCREEN ─── */
+  #home {
+    align-items: center;
+    justify-content: center;
+    padding: 40px 20px;
+    text-align: center;
+  }
+
+  .home-inner {
+    max-width: 720px;
+    width: 100%;
+  }
+
+  .crest {
+    font-size: 56px;
+    margin-bottom: 16px;
+    filter: drop-shadow(0 4px 12px rgba(184,134,11,0.4));
+    animation: float 4s ease-in-out infinite;
+  }
+
+  @keyframes float {
+    0%,100% { transform: translateY(0); }
+    50% { transform: translateY(-8px); }
+  }
+
+  .home-badge {
+    display: inline-block;
+    border: 1px solid var(--gold);
+    color: var(--gold);
+    font-family: 'Courier Prime', monospace;
+    font-size: 10px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    padding: 5px 18px;
+    margin-bottom: 20px;
+  }
+
+  h1.title {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: clamp(32px, 6vw, 58px);
+    font-weight: 700;
+    line-height: 1.1;
+    color: var(--parchment);
+    margin-bottom: 8px;
+  }
+
+  h1.title em {
+    color: var(--gold-light);
+    font-style: italic;
+  }
+
+  .subtitle {
+    font-size: 17px;
+    color: rgba(245,240,232,0.65);
+    margin-bottom: 40px;
+    font-style: italic;
+  }
+
+  .divider {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin: 28px 0;
+  }
+  .divider::before, .divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(to right, transparent, var(--gold), transparent);
+  }
+  .divider span {
+    color: var(--gold);
+    font-size: 18px;
+  }
+
+  .mode-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+    margin-bottom: 32px;
+  }
+
+  .mode-card {
+    background: rgba(245,240,232,0.05);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 28px 20px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .mode-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(184,134,11,0.12), transparent);
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+
+  .mode-card:hover { border-color: var(--gold); transform: translateY(-3px); box-shadow: 0 8px 32px rgba(184,134,11,0.2); }
+  .mode-card:hover::before { opacity: 1; }
+
+  .mode-icon { font-size: 36px; margin-bottom: 14px; display: block; }
+  .mode-title { font-family: 'Playfair Display', serif; font-size: 18px; color: var(--parchment); margin-bottom: 6px; }
+  .mode-desc { font-size: 14px; color: rgba(245,240,232,0.55); line-height: 1.5; }
+
+  .stats-bar {
+    display: flex;
+    justify-content: center;
+    gap: 32px;
+    padding: 20px;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    background: rgba(245,240,232,0.03);
+  }
+
+  .stat-item { text-align: center; }
+  .stat-val { font-family: 'Playfair Display', serif; font-size: 28px; color: var(--gold-light); }
+  .stat-label { font-size: 12px; color: rgba(245,240,232,0.5); letter-spacing: 1px; text-transform: uppercase; font-family: 'Courier Prime', monospace; }
+
+  /* ─── SECTION SELECT ─── */
+  #section-select {
+    align-items: center;
+    justify-content: center;
+    padding: 40px 20px;
+  }
+
+  .panel {
+    background: rgba(245,240,232,0.04);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 36px;
+    width: 100%;
+    max-width: 700px;
+  }
+
+  .panel-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 24px;
+    color: var(--gold-light);
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .section-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 24px;
+  }
+
+  .section-btn {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 16px 20px;
+    background: rgba(245,240,232,0.04);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    cursor: pointer;
+    transition: all 0.25s;
+    text-align: left;
+    color: var(--parchment);
+    font-family: 'Crimson Pro', serif;
+    font-size: 16px;
+  }
+
+  .section-btn:hover { background: rgba(184,134,11,0.1); border-color: var(--gold); }
+
+  .section-num {
+    font-family: 'Courier Prime', monospace;
+    font-size: 11px;
+    letter-spacing: 2px;
+    color: var(--gold);
+    min-width: 28px;
+  }
+
+  .section-count {
+    margin-left: auto;
+    font-size: 13px;
+    color: rgba(245,240,232,0.4);
+    font-family: 'Courier Prime', monospace;
+  }
+
+  /* ─── QUIZ SETUP ─── */
+  #quiz-setup {
+    align-items: center;
+    justify-content: center;
+    padding: 40px 20px;
+  }
+
+  .setup-option {
+    margin-bottom: 20px;
+  }
+
+  .setup-label {
+    font-family: 'Courier Prime', monospace;
+    font-size: 12px;
+    letter-spacing: 2px;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 10px;
+    display: block;
+  }
+
+  .pill-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .pill {
+    padding: 8px 20px;
+    border: 1px solid var(--border);
+    border-radius: 50px;
+    cursor: pointer;
+    font-family: 'Crimson Pro', serif;
+    font-size: 15px;
+    color: rgba(245,240,232,0.7);
+    background: transparent;
+    transition: all 0.2s;
+  }
+
+  .pill:hover, .pill.active {
+    background: var(--gold);
+    border-color: var(--gold);
+    color: var(--ink);
+    font-weight: 600;
+  }
+
+  /* ─── STUDY MODE ─── */
+  #study {
+    padding: 0;
+    flex-direction: column;
+  }
+
+  .top-bar {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 16px 24px;
+    background: rgba(26,18,8,0.9);
+    border-bottom: 1px solid var(--border);
+    backdrop-filter: blur(10px);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+
+  .back-btn {
+    background: none;
+    border: 1px solid var(--border);
+    color: var(--gold);
+    padding: 6px 14px;
+    font-family: 'Courier Prime', monospace;
+    font-size: 12px;
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: all 0.2s;
+    border-radius: 2px;
+  }
+
+  .back-btn:hover { background: rgba(184,134,11,0.1); border-color: var(--gold); }
+
+  .top-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 18px;
+    color: var(--parchment);
+    flex: 1;
+  }
+
+  .top-badge {
+    font-family: 'Courier Prime', monospace;
+    font-size: 11px;
+    color: var(--gold);
+    letter-spacing: 2px;
+  }
+
+  .study-content {
+    padding: 32px 24px;
+    max-width: 860px;
+    margin: 0 auto;
+    width: 100%;
+    flex: 1;
+  }
+
+  .section-header {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px;
+    color: var(--gold-light);
+    margin: 32px 0 20px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+  }
+
+  .section-header .part-label {
+    font-family: 'Courier Prime', monospace;
+    font-size: 11px;
+    color: rgba(184,134,11,0.6);
+    letter-spacing: 2px;
+  }
+
+  .q-card {
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    margin-bottom: 10px;
+    overflow: hidden;
+    transition: border-color 0.2s;
+  }
+
+  .q-card:hover { border-color: rgba(184,134,11,0.5); }
+
+  .q-front {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    padding: 16px 20px;
+    cursor: pointer;
+    background: rgba(245,240,232,0.03);
+    transition: background 0.2s;
+  }
+
+  .q-front:hover { background: rgba(245,240,232,0.06); }
+
+  .q-num {
+    font-family: 'Courier Prime', monospace;
+    font-size: 12px;
+    color: var(--gold);
+    min-width: 36px;
+    margin-top: 2px;
+    letter-spacing: 1px;
+  }
+
+  .q-text {
+    flex: 1;
+    font-size: 16px;
+    line-height: 1.5;
+    color: var(--parchment);
+  }
+
+  .q-toggle {
+    color: var(--gold);
+    font-size: 18px;
+    transition: transform 0.3s;
+    margin-top: 2px;
+    flex-shrink: 0;
+  }
+
+  .q-card.open .q-toggle { transform: rotate(180deg); }
+
+  .q-answer {
+    display: none;
+    padding: 16px 20px 16px 72px;
+    background: rgba(184,134,11,0.06);
+    border-top: 1px solid var(--border);
+    font-size: 15px;
+    color: rgba(245,240,232,0.85);
+    line-height: 1.7;
+  }
+
+  .q-answer.visible { display: block; animation: slideDown 0.25s ease; }
+
+  @keyframes slideDown {
+    from { opacity: 0; transform: translateY(-8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .answer-label {
+    font-family: 'Courier Prime', monospace;
+    font-size: 10px;
+    letter-spacing: 2px;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+
+  .answer-text { color: var(--parchment); }
+  .answer-text strong { color: var(--gold-light); }
+
+  .corrected-note {
+    display: inline-block;
+    background: rgba(139,26,26,0.2);
+    border: 1px solid rgba(139,26,26,0.4);
+    border-radius: 2px;
+    padding: 2px 8px;
+    font-family: 'Courier Prime', monospace;
+    font-size: 10px;
+    letter-spacing: 1px;
+    color: #ff8888;
+    margin-left: 8px;
+    vertical-align: middle;
+  }
+
+  /* ─── QUIZ SCREEN ─── */
+  #quiz {
+    flex-direction: column;
+  }
+
+  .quiz-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 16px 24px;
+    background: rgba(26,18,8,0.9);
+    border-bottom: 1px solid var(--border);
+    backdrop-filter: blur(10px);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+
+  .quiz-progress-bar {
+    flex: 1;
+    height: 4px;
+    background: rgba(245,240,232,0.1);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  .quiz-progress-fill {
+    height: 100%;
+    background: linear-gradient(to right, var(--gold), var(--gold-light));
+    transition: width 0.4s ease;
+    border-radius: 2px;
+  }
+
+  .quiz-counter {
+    font-family: 'Courier Prime', monospace;
+    font-size: 13px;
+    color: var(--gold);
+    white-space: nowrap;
+  }
+
+  .timer-display {
+    font-family: 'Courier Prime', monospace;
+    font-size: 15px;
+    color: rgba(245,240,232,0.6);
+    white-space: nowrap;
+    min-width: 48px;
+    text-align: right;
+  }
+
+  .timer-display.warning { color: #ff8888; animation: pulse 1s ease-in-out infinite; }
+
+  @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.4; } }
+
+  .quiz-body {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 24px;
+  }
+
+  .quiz-card {
+    width: 100%;
+    max-width: 700px;
+    background: rgba(245,240,232,0.04);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    overflow: hidden;
+    animation: cardIn 0.35s ease;
+  }
+
+  @keyframes cardIn {
+    from { opacity: 0; transform: translateY(20px) scale(0.98); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+  }
+
+  .quiz-card-header {
+    padding: 12px 24px;
+    background: rgba(184,134,11,0.08);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .quiz-section-tag {
+    font-family: 'Courier Prime', monospace;
+    font-size: 10px;
+    letter-spacing: 2px;
+    color: var(--gold);
+    text-transform: uppercase;
+  }
+
+  .quiz-q-num {
+    font-family: 'Courier Prime', monospace;
+    font-size: 12px;
+    color: rgba(245,240,232,0.4);
+  }
+
+  .quiz-question {
+    padding: 32px 28px;
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(16px, 2.5vw, 21px);
+    line-height: 1.5;
+    color: var(--parchment);
+    min-height: 120px;
+    display: flex;
+    align-items: center;
+  }
+
+  .quiz-reveal-zone {
+    padding: 0 28px 28px;
+  }
+
+  .reveal-btn {
+    width: 100%;
+    padding: 14px;
+    background: transparent;
+    border: 1px dashed var(--gold);
+    color: var(--gold);
+    font-family: 'Crimson Pro', serif;
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.25s;
+    border-radius: 3px;
+    letter-spacing: 1px;
+  }
+
+  .reveal-btn:hover { background: rgba(184,134,11,0.1); }
+
+  .answer-reveal {
+    display: none;
+    animation: slideDown 0.3s ease;
+  }
+
+  .answer-reveal.shown { display: block; }
+
+  .quiz-answer-box {
+    background: rgba(184,134,11,0.08);
+    border: 1px solid rgba(184,134,11,0.25);
+    border-radius: 3px;
+    padding: 18px 20px;
+    margin-bottom: 16px;
+    font-size: 17px;
+    line-height: 1.6;
+    color: var(--parchment);
+  }
+
+  .quiz-answer-box .answer-label { margin-bottom: 8px; }
+
+  .judgment-row {
+    display: flex;
+    gap: 10px;
+  }
+
+  .judge-btn {
+    flex: 1;
+    padding: 12px;
+    border: none;
+    border-radius: 3px;
+    font-family: 'Crimson Pro', serif;
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+
+  .judge-btn.correct { background: rgba(45,106,79,0.3); border: 1px solid rgba(45,106,79,0.6); color: #6bcca0; }
+  .judge-btn.incorrect { background: rgba(139,26,26,0.3); border: 1px solid rgba(139,26,26,0.6); color: #ff8888; }
+  .judge-btn:hover { transform: scale(1.02); filter: brightness(1.2); }
+
+  /* ─── RESULTS SCREEN ─── */
+  #results {
+    align-items: center;
+    justify-content: center;
+    padding: 40px 20px;
+    text-align: center;
+  }
+
+  .results-inner {
+    max-width: 600px;
+    width: 100%;
+  }
+
+  .score-circle {
+    width: 160px;
+    height: 160px;
+    border-radius: 50%;
+    border: 3px solid var(--gold);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 24px;
+    background: rgba(184,134,11,0.08);
+    position: relative;
+  }
+
+  .score-circle::before {
+    content: '';
+    position: absolute;
+    inset: 6px;
+    border-radius: 50%;
+    border: 1px solid var(--border);
+  }
+
+  .score-pct {
+    font-family: 'Playfair Display', serif;
+    font-size: 48px;
+    color: var(--gold-light);
+    line-height: 1;
+  }
+
+  .score-label {
+    font-size: 13px;
+    color: rgba(245,240,232,0.5);
+    font-family: 'Courier Prime', monospace;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+
+  .results-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 28px;
+    color: var(--parchment);
+    margin-bottom: 8px;
+  }
+
+  .results-sub {
+    font-size: 16px;
+    color: rgba(245,240,232,0.55);
+    margin-bottom: 28px;
+    font-style: italic;
+  }
+
+  .breakdown-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-bottom: 28px;
+  }
+
+  .breakdown-item {
+    background: rgba(245,240,232,0.04);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    padding: 16px 10px;
+  }
+
+  .breakdown-val {
+    font-family: 'Playfair Display', serif;
+    font-size: 24px;
+    color: var(--gold-light);
+  }
+
+  .breakdown-label {
+    font-family: 'Courier Prime', monospace;
+    font-size: 10px;
+    letter-spacing: 1px;
+    color: rgba(245,240,232,0.4);
+    text-transform: uppercase;
+    margin-top: 4px;
+  }
+
+  .missed-section {
+    text-align: left;
+    background: rgba(139,26,26,0.1);
+    border: 1px solid rgba(139,26,26,0.25);
+    border-radius: 3px;
+    padding: 20px;
+    margin-bottom: 24px;
+    max-height: 220px;
+    overflow-y: auto;
+  }
+
+  .missed-title {
+    font-family: 'Courier Prime', monospace;
+    font-size: 11px;
+    letter-spacing: 2px;
+    color: #ff8888;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+
+  .missed-item {
+    font-size: 14px;
+    color: rgba(245,240,232,0.7);
+    padding: 6px 0;
+    border-bottom: 1px solid rgba(139,26,26,0.15);
+    line-height: 1.4;
+  }
+
+  .missed-item:last-child { border-bottom: none; }
+
+  .missed-q { color: rgba(245,240,232,0.45); font-size: 12px; font-family: 'Courier Prime', monospace; }
+
+  .btn-row {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .btn-primary {
+    padding: 12px 28px;
+    background: var(--gold);
+    border: none;
+    color: var(--ink);
+    font-family: 'Playfair Display', serif;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    border-radius: 3px;
+    transition: all 0.2s;
+    letter-spacing: 0.5px;
+  }
+
+  .btn-primary:hover { background: var(--gold-light); transform: translateY(-2px); box-shadow: 0 4px 20px rgba(184,134,11,0.3); }
+
+  .btn-secondary {
+    padding: 12px 28px;
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--parchment);
+    font-family: 'Crimson Pro', serif;
+    font-size: 16px;
+    cursor: pointer;
+    border-radius: 3px;
+    transition: all 0.2s;
+  }
+
+  .btn-secondary:hover { border-color: var(--gold); color: var(--gold); }
+
+  /* ─── REVEAL ALL BUTTON ─── */
+  .control-row {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+  }
+
+  .ctrl-btn {
+    padding: 8px 18px;
+    background: transparent;
+    border: 1px solid var(--border);
+    color: rgba(245,240,232,0.6);
+    font-family: 'Courier Prime', monospace;
+    font-size: 11px;
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: all 0.2s;
+    border-radius: 2px;
+    text-transform: uppercase;
+  }
+
+  .ctrl-btn:hover { border-color: var(--gold); color: var(--gold); }
+
+  /* ─── SEARCH ─── */
+  .search-wrap {
+    position: relative;
+    margin-bottom: 16px;
+  }
+
+  .search-input {
+    width: 100%;
+    padding: 12px 16px 12px 40px;
+    background: rgba(245,240,232,0.05);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    color: var(--parchment);
+    font-family: 'Crimson Pro', serif;
+    font-size: 16px;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  .search-input:focus { border-color: var(--gold); }
+  .search-input::placeholder { color: rgba(245,240,232,0.3); }
+
+  .search-icon {
+    position: absolute;
+    left: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: rgba(245,240,232,0.3);
+    font-size: 16px;
+  }
+
+  /* ─── FLASHCARD MODE ─── */
+  .flashcard-wrap {
+    perspective: 1000px;
+    width: 100%;
+    max-width: 640px;
+    height: 300px;
+    margin: 0 auto 24px;
+    cursor: pointer;
+  }
+
+  .flashcard-inner {
+    width: 100%;
+    height: 100%;
+    transition: transform 0.6s cubic-bezier(0.4, 0.2, 0.2, 1);
+    transform-style: preserve-3d;
+    position: relative;
+  }
+
+  .flashcard-wrap.flipped .flashcard-inner { transform: rotateY(180deg); }
+
+  .flashcard-face {
+    position: absolute;
+    inset: 0;
+    backface-visibility: hidden;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 32px;
+    text-align: center;
+  }
+
+  .card-front { background: rgba(245,240,232,0.04); }
+  .card-back {
+    background: rgba(184,134,11,0.08);
+    border-color: rgba(184,134,11,0.3);
+    transform: rotateY(180deg);
+  }
+
+  .card-face-label {
+    font-family: 'Courier Prime', monospace;
+    font-size: 10px;
+    letter-spacing: 3px;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 20px;
+  }
+
+  .card-face-text {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(15px, 2.5vw, 20px);
+    line-height: 1.5;
+    color: var(--parchment);
+  }
+
+  .card-hint {
+    margin-top: 20px;
+    font-size: 13px;
+    color: rgba(245,240,232,0.3);
+    font-style: italic;
+  }
+
+  .flashcard-nav {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    max-width: 640px;
+    margin: 0 auto;
+  }
+
+  .nav-btn {
+    padding: 10px 24px;
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--parchment);
+    font-family: 'Courier Prime', monospace;
+    font-size: 13px;
+    cursor: pointer;
+    border-radius: 2px;
+    transition: all 0.2s;
+    letter-spacing: 1px;
+  }
+
+  .nav-btn:hover { border-color: var(--gold); color: var(--gold); }
+
+  .card-pos {
+    font-family: 'Playfair Display', serif;
+    font-size: 20px;
+    color: rgba(245,240,232,0.5);
+    min-width: 60px;
+    text-align: center;
+  }
+
+  /* ─── SCROLLBAR ─── */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: rgba(245,240,232,0.03); }
+  ::-webkit-scrollbar-thumb { background: var(--gold); border-radius: 3px; }
+
+  /* ─── RESPONSIVE ─── */
+  @media (max-width: 600px) {
+    .mode-grid { grid-template-columns: 1fr 1fr; }
+    .breakdown-grid { grid-template-columns: 1fr 1fr; }
+    .quiz-question { font-size: 16px; }
+    .q-answer { padding-left: 52px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ████████ HOME SCREEN ████████ -->
+<div id="home" class="screen active">
+  <div class="home-inner">
+    <div class="crest">𝄞</div>
+    <div class="home-badge">ABRSM · Grade 5 · Theory</div>
+    <h1 class="title">Music Theory<br><em>Examination Prep</em></h1>
+    <p class="subtitle">150 questions across all six syllabus topics — master every concept before exam day</p>
+
+    <div class="stats-bar" style="margin-bottom: 32px;">
+      <div class="stat-item"><div class="stat-val">150</div><div class="stat-label">Questions</div></div>
+      <div class="stat-item"><div class="stat-val">6</div><div class="stat-label">Topics</div></div>
+      <div class="stat-item"><div class="stat-val" id="home-score">—</div><div class="stat-label">Best Score</div></div>
+      <div class="stat-item"><div class="stat-val" id="home-quizzes">0</div><div class="stat-label">Quizzes Taken</div></div>
+    </div>
+
+    <div class="divider"><span>♩</span></div>
+
+    <div class="mode-grid">
+      <div class="mode-card" onclick="showStudy('all')">
+        <span class="mode-icon">📖</span>
+        <div class="mode-title">Study All</div>
+        <div class="mode-desc">Browse all 150 questions with expandable answers. Perfect for first-pass review.</div>
+      </div>
+      <div class="mode-card" onclick="showSectionSelect()">
+        <span class="mode-icon">📂</span>
+        <div class="mode-title">By Section</div>
+        <div class="mode-desc">Focus on one topic area at a time — rhythm, pitch, scales, intervals, chords, or terms.</div>
+      </div>
+      <div class="mode-card" onclick="showQuizSetup()">
+        <span class="mode-icon">✍️</span>
+        <div class="mode-title">Quiz Mode</div>
+        <div class="mode-desc">Timed exam simulation. Rate yourself on each answer and track your score.</div>
+      </div>
+      <div class="mode-card" onclick="showFlashcards('all')">
+        <span class="mode-icon">🃏</span>
+        <div class="mode-title">Flashcards</div>
+        <div class="mode-desc">Flip through every question as individual revision cards.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ████████ SECTION SELECT ████████ -->
+<div id="section-select" class="screen">
+  <div class="panel">
+    <div class="panel-title">📂 Choose a Section</div>
+    <div class="section-list" id="section-list-btns"></div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;">
+      <button class="btn-primary" onclick="showStudy('all')">Study All Sections</button>
+      <button class="btn-secondary" onclick="goHome()">← Back</button>
+    </div>
+  </div>
+</div>
+
+<!-- ████████ QUIZ SETUP ████████ -->
+<div id="quiz-setup" class="screen">
+  <div class="panel" style="max-width:560px;">
+    <div class="panel-title">✍️ Quiz Configuration</div>
+
+    <div class="setup-option">
+      <span class="setup-label">Number of Questions</span>
+      <div class="pill-group" id="qcount-group">
+        <div class="pill active" data-val="10" onclick="setPill(this,'qcount')">10</div>
+        <div class="pill" data-val="25" onclick="setPill(this,'qcount')">25</div>
+        <div class="pill" data-val="50" onclick="setPill(this,'qcount')">50</div>
+        <div class="pill" data-val="150" onclick="setPill(this,'qcount')">All 150</div>
+      </div>
+    </div>
+
+    <div class="setup-option">
+      <span class="setup-label">Topic</span>
+      <div class="pill-group" id="qtopic-group">
+        <div class="pill active" data-val="all" onclick="setPill(this,'qtopic')">All Topics</div>
+        <div class="pill" data-val="0" onclick="setPill(this,'qtopic')">Rhythm</div>
+        <div class="pill" data-val="1" onclick="setPill(this,'qtopic')">Pitch & Clefs</div>
+        <div class="pill" data-val="2" onclick="setPill(this,'qtopic')">Scales</div>
+        <div class="pill" data-val="3" onclick="setPill(this,'qtopic')">Intervals</div>
+        <div class="pill" data-val="4" onclick="setPill(this,'qtopic')">Chords</div>
+        <div class="pill" data-val="5" onclick="setPill(this,'qtopic')">Terms</div>
+      </div>
+    </div>
+
+    <div class="setup-option">
+      <span class="setup-label">Timer per Question</span>
+      <div class="pill-group" id="qtimer-group">
+        <div class="pill active" data-val="0" onclick="setPill(this,'qtimer')">No Timer</div>
+        <div class="pill" data-val="30" onclick="setPill(this,'qtimer')">30 sec</div>
+        <div class="pill" data-val="60" onclick="setPill(this,'qtimer')">60 sec</div>
+        <div class="pill" data-val="90" onclick="setPill(this,'qtimer')">90 sec</div>
+      </div>
+    </div>
+
+    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:24px;">
+      <button class="btn-primary" onclick="startQuiz()">Begin Quiz →</button>
+      <button class="btn-secondary" onclick="goHome()">← Back</button>
+    </div>
+  </div>
+</div>
+
+<!-- ████████ STUDY SCREEN ████████ -->
+<div id="study" class="screen">
+  <div class="top-bar">
+    <button class="back-btn" onclick="goHome()">← Home</button>
+    <div class="top-title" id="study-title">Study Mode</div>
+    <div class="top-badge" id="study-badge">150 Q</div>
+  </div>
+  <div class="study-content">
+    <div class="search-wrap">
+      <span class="search-icon">🔍</span>
+      <input class="search-input" id="search-input" placeholder="Search questions or answers…" oninput="filterStudy()" />
+    </div>
+    <div class="control-row">
+      <button class="ctrl-btn" onclick="expandAll()">Expand All</button>
+      <button class="ctrl-btn" onclick="collapseAll()">Collapse All</button>
+    </div>
+    <div id="study-list"></div>
+  </div>
+</div>
+
+<!-- ████████ QUIZ SCREEN ████████ -->
+<div id="quiz" class="screen">
+  <div class="quiz-header">
+    <button class="back-btn" onclick="goHome()">✕</button>
+    <div class="quiz-progress-bar">
+      <div class="quiz-progress-fill" id="quiz-prog-fill" style="width:0%"></div>
+    </div>
+    <div class="quiz-counter" id="quiz-counter">1 / 10</div>
+    <div class="timer-display" id="timer-display"></div>
+  </div>
+
+  <div class="quiz-body">
+    <div class="quiz-card" id="quiz-card">
+      <div class="quiz-card-header">
+        <span class="quiz-section-tag" id="quiz-section-tag">Part 1</span>
+        <span class="quiz-q-num" id="quiz-q-num">#1</span>
+      </div>
+      <div class="quiz-question" id="quiz-question">Loading…</div>
+      <div class="quiz-reveal-zone">
+        <button class="reveal-btn" id="reveal-btn" onclick="revealAnswer()">Tap to reveal answer</button>
+        <div class="answer-reveal" id="answer-reveal">
+          <div class="quiz-answer-box">
+            <div class="answer-label">▸ ANSWER</div>
+            <div id="quiz-answer-text">—</div>
+          </div>
+          <div class="judgment-row">
+            <button class="judge-btn correct" onclick="judgeAnswer(true)">✓ Got it</button>
+            <button class="judge-btn incorrect" onclick="judgeAnswer(false)">✗ Missed</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ████████ FLASHCARD SCREEN ████████ -->
+<div id="flashcard" class="screen">
+  <div class="top-bar">
+    <button class="back-btn" onclick="goHome()">← Home</button>
+    <div class="top-title">Flashcards</div>
+    <div class="top-badge" id="fc-badge">1 / 150</div>
+  </div>
+  <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px 20px;">
+    <div class="flashcard-wrap" id="fc-wrap" onclick="flipCard()">
+      <div class="flashcard-inner" id="fc-inner">
+        <div class="flashcard-face card-front">
+          <div class="card-face-label">Question</div>
+          <div class="card-face-text" id="fc-question">—</div>
+          <div class="card-hint">Tap to reveal answer</div>
+        </div>
+        <div class="flashcard-face card-back">
+          <div class="card-face-label">Answer</div>
+          <div class="card-face-text" id="fc-answer">—</div>
+        </div>
+      </div>
+    </div>
+    <div class="flashcard-nav">
+      <button class="nav-btn" onclick="fcNav(-1)">◀ PREV</button>
+      <div class="card-pos" id="fc-pos">1/150</div>
+      <button class="nav-btn" onclick="fcNav(1)">NEXT ▶</button>
+    </div>
+    <div style="margin-top:20px;">
+      <button class="btn-secondary" onclick="shuffleCards()" style="margin-right:10px;">🔀 Shuffle</button>
+      <button class="btn-secondary" onclick="resetCards()">↺ Reset Order</button>
+    </div>
+  </div>
+</div>
+
+<!-- ████████ RESULTS SCREEN ████████ -->
+<div id="results" class="screen">
+  <div class="results-inner">
+    <div class="score-circle">
+      <div class="score-pct" id="res-pct">0%</div>
+      <div class="score-label">Score</div>
+    </div>
+    <div class="results-title" id="res-title">Quiz Complete!</div>
+    <div class="results-sub" id="res-sub">Review your results below</div>
+
+    <div class="breakdown-grid">
+      <div class="breakdown-item">
+        <div class="breakdown-val" id="res-correct">0</div>
+        <div class="breakdown-label">Correct</div>
+      </div>
+      <div class="breakdown-item">
+        <div class="breakdown-val" id="res-wrong">0</div>
+        <div class="breakdown-label">Missed</div>
+      </div>
+      <div class="breakdown-item">
+        <div class="breakdown-val" id="res-time">0:00</div>
+        <div class="breakdown-label">Time Taken</div>
+      </div>
+    </div>
+
+    <div class="missed-section" id="missed-section" style="display:none;">
+      <div class="missed-title">⚠ Questions to Review</div>
+      <div id="missed-list"></div>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn-primary" onclick="showQuizSetup()">Try Again</button>
+      <button class="btn-secondary" onclick="reviewMissed()">Study Missed Q's</button>
+      <button class="btn-secondary" onclick="goHome()">Home</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════
+//  QUESTION BANK — all 150 Q&A with corrections
+// ═══════════════════════════════════════════════
+const SECTIONS = [
+  "Part 1: Rhythm & Time Signatures",
+  "Part 2: Clefs, Pitch & Transposition",
+  "Part 3: Keys & Scales",
+  "Part 4: Intervals",
+  "Part 5: Chords & Cadences",
+  "Part 6: Terms, Signs, Ornaments & Instruments"
+];
+
+const QS = [
+  // PART 1
+  {s:0,q:"What does the time signature 5/8 mean?",a:"5 quaver (eighth note) beats per bar."},
+  {s:0,q:"Is 9/8 time considered simple or compound?",a:"Compound."},
+  {s:0,q:"Is 9/8 time considered duple, triple, or quadruple?",a:"Triple — there are three dotted-crotchet beats per bar."},
+  {s:0,q:"How many demisemiquavers are in a dotted crotchet?",a:"12 — eight in the crotchet plus four added by the dot."},
+  {s:0,q:"What is the correct way to group quavers in 6/8 time?",a:"Into two groups of three."},
+  {s:0,q:"Write the single note value that fills a complete bar of 4/2 time.",a:"A breve (double whole note)."},
+  {s:0,q:"What is a breve, and how many semibreves is it worth?",a:"A breve is worth two semibreves (or eight crotchets)."},
+  {s:0,q:"In 3/4 time, how do you correctly write a rest for a whole bar?",a:"A single semibreve rest (whole rest) placed in the middle of the bar."},
+  {s:0,q:"What does a double dot after a note do to its value?",a:"It lengthens the note by three-quarters of its original value. The first dot adds half the note's value; the second dot adds half of the first dot's value."},
+  {s:0,q:"If a bar of 7/8 time is grouped as 3+2+2, where do the main pulses fall?",a:"On the 1st, 4th, and 6th quavers."},
+  {s:0,q:"What is a duplet, and in what type of time signature is it normally found?",a:"Two notes played in the time of three, normally found in compound time."},
+  {s:0,q:"How many semiquavers are there in a double-dotted minim?",a:"14 — the minim equals 8 semiquavers, the first dot adds 4, and the second dot adds 2."},
+  {s:0,q:"What time signature has three minim beats per bar?",a:"3/2."},
+  {s:0,q:"Explain the difference between the pulse of 3/4 time and 6/8 time.",a:"3/4 has three simple crotchet beats per bar; 6/8 has two compound dotted-crotchet beats per bar."},
+  {s:0,q:"What note value is equal to a triplet of quavers in 2/4 time?",a:"A crotchet — the triplet fits into the space of two standard quavers."},
+  {s:0,q:"How many dotted crotchets fill a bar of 12/8 time?",a:"Four."},
+  {s:0,q:"If a piece is in 5/4 time, is it regular or irregular time?",a:"Irregular (also called asymmetric)."},
+  {s:0,q:"What is the correct rest to complete a bar of 4/4 if the first beat is a dotted minim?",a:"A single crotchet rest."},
+  {s:0,q:"How many crotchets equal a dotted semibreve?",a:"Six."},
+  {s:0,q:"In 6/4 time, what is the value of one compound beat?",a:"A dotted minim."},
+  {s:0,q:"What does a line with the number '5' over a group of semiquavers indicate?",a:"A quintuplet — five notes played in the time usually taken by four."},
+  {s:0,q:"Rewrite a rhythm from 2/2 time into 4/4 time so it sounds exactly the same. What changes?",a:"All note values must be halved (e.g., minims become crotchets), assuming the tempo stays the same."},
+  {s:0,q:"If a piece starts on an anacrusis of three quavers in 4/4 time, what is the value of the final bar?",a:"Five quavers' worth — typically written as a minim tied to a quaver, or a minim followed by a single quaver rest."},
+  {s:0,q:"How do you group a rest on the second beat of 3/4 time?",a:"A single crotchet rest."},
+  {s:0,q:"Is 4/8 simple or compound time?",a:"Simple — it has four quaver beats."},
+
+  // PART 2
+  {s:1,q:"Which line of the staff is Middle C on in the Alto clef?",a:"The middle (third) line."},
+  {s:1,q:"Which line of the staff is Middle C on in the Tenor clef?",a:"The fourth line from the bottom."},
+  {s:1,q:"Name the orchestral instrument that regularly reads in the Alto clef.",a:"Viola."},
+  {s:1,q:"Which three orchestral instruments occasionally use the Tenor clef for their higher registers?",a:"Cello, Bassoon, and Trombone."},
+  {s:1,q:"If you transpose a melody up a major 2nd for a Bb Clarinet, what key will C major become?",a:"D major."},
+  {s:1,q:"Transpose the note E4 down an octave into the Bass clef.",a:"It becomes E3, which sits on the first ledger line below the bass staff."},
+  {s:1,q:"What is the enharmonic equivalent of E sharp?",a:"F natural."},
+  {s:1,q:"Write the enharmonic equivalent of C flat.",a:"B natural."},
+  {s:1,q:"If a French Horn in F plays a written C, what concert pitch note sounds?",a:"F — it sounds a perfect 5th lower than written."},
+  {s:1,q:"How far apart does an Alto Saxophone in Eb sound from its written notes?",a:"It sounds a major 6th lower than written."},
+  {s:1,q:"If a Trumpet in Bb reads a written G, what note sounds at concert pitch?",a:"F — it sounds a major 2nd lower than written."},
+  {s:1,q:"Convert the note F5 from Treble clef to Alto clef.",a:"In Alto clef, F5 sits on the third ledger line above the staff. (The alto clef top line is G4, so counting upwards: A4 = 1st space above, B4 = 1st ledger line, C5 = space, D5 = 2nd ledger line, E5 = space, F5 = 3rd ledger line above.)", corrected:true},
+  {s:1,q:"Convert the note D4 from Bass clef to Tenor clef.",a:"In Tenor clef, D4 sits in the top space of the staff."},
+  {s:1,q:"What is a transposing instrument?",a:"An instrument whose written sheet music differs from the actual sounding concert pitch it produces."},
+  {s:1,q:"If a piece is in concert pitch F major, what key signature does the Bb Clarinet need?",a:"G major — written a major 2nd higher than concert pitch."},
+  {s:1,q:"If a piece is in concert pitch G major, what key signature does the French Horn in F need?",a:"D major — written a perfect 5th higher than concert pitch."},
+  {s:1,q:"Name the enharmonic equivalent of F double sharp.",a:"G natural."},
+  {s:1,q:"What clef does the Double Bass use, and how does its sound relate to the written notes?",a:"It reads Bass clef but sounds an octave lower than written."},
+  {s:1,q:"Rewrite a melody written in Treble clef for the Viola in Alto clef. What happens to note positions on the staff?",a:"When converting treble clef to alto clef, the same pitch appears up a 7th on the staff — for example, E4 is on line 1 in treble clef but on line 4 in alto clef.", corrected:true},
+  {s:1,q:"Transpose a concert pitch melody in D major for a Clarinet in A. What is the new key?",a:"F major — written a minor 3rd higher than concert pitch."},
+  {s:1,q:"If a Clarinet in A plays a written C, what note sounds?",a:"A natural — it sounds a minor 3rd lower than written."},
+  {s:1,q:"Write Middle C in all four clefs (Treble, Bass, Alto, Tenor).",a:"Treble: 1st ledger line below the staff. Bass: 1st ledger line above the staff. Alto: 3rd (middle) line. Tenor: 4th line from bottom."},
+  {s:1,q:"What is the sounding pitch of a piccolo playing a written C5?",a:"C6 — it sounds an octave higher than written."},
+  {s:1,q:"Convert the note B3 from Alto clef to Bass clef.",a:"In Bass clef, B3 sits in the space just above the top (5th) line of the staff.", corrected:true},
+  {s:1,q:"Why do instruments like the Trumpet and Clarinet transpose?",a:"So players can switch between instruments of different sizes in the same family using the same fingerings and reading the same written notes."},
+
+  // PART 3
+  {s:2,q:"What is the key signature of F# major?",a:"6 sharps: F#, C#, G#, D#, A#, E#."},
+  {s:2,q:"How many flats are in the key of Gb major?",a:"6 flats: Bb, Eb, Ab, Db, Gb, Cb."},
+  {s:2,q:"What is the relative minor of Db major?",a:"Bb minor."},
+  {s:2,q:"Name the major key with 6 sharps.",a:"F# major."},
+  {s:2,q:"What is the relative minor of B major?",a:"G# minor."},
+  {s:2,q:"Which notes are raised in the ascending melodic minor scale of C# minor?",a:"A# and B# — the 6th and 7th degrees are raised."},
+  {s:2,q:"What note is the dominant in the key of Ab major?",a:"Eb."},
+  {s:2,q:"What note is the submediant in the key of E minor?",a:"C natural."},
+  {s:2,q:"Name the key signature with 5 flats.",a:"Db major (or Bb minor)."},
+  {s:2,q:"What is the supertonic note in Bb minor?",a:"C."},
+  {s:2,q:"What is the leading note in F minor?",a:"E natural."},
+  {s:2,q:"Which degree of the scale is called the mediant?",a:"The 3rd degree."},
+  {s:2,q:"Write the descending harmonic minor scale of G# minor. Which note requires an accidental?",a:"Fx (F double sharp) — the raised 7th is maintained in both directions in the harmonic minor scale."},
+  {s:2,q:"What is the subdominant note in C# major?",a:"F#."},
+  {s:2,q:"True or False: The key signature for Eb minor is 6 flats.",a:"True — Bb, Eb, Ab, Db, Gb, Cb."},
+  {s:2,q:"Identify the enharmonic equivalent key to Cb major.",a:"B major."},
+  {s:2,q:"Name the relative major of D# minor.",a:"F# major."},
+  {s:2,q:"What are the accidentals required to write a D melodic minor scale descending?",a:"C natural and Bb — the scale reverts to the natural minor when descending."},
+  {s:2,q:"What is the technical name for the 2nd degree of the scale?",a:"Supertonic."},
+  {s:2,q:"What is the key signature of Bb minor?",a:"5 flats: Bb, Eb, Ab, Db, Gb."},
+  {s:2,q:"What degrees of the scale are lowered to change a major scale into a natural minor scale?",a:"The 3rd, 6th, and 7th degrees are each lowered by a semitone."},
+  {s:2,q:"Name the major key with 4 sharps.",a:"E major."},
+  {s:2,q:"What is the leading note in B major?",a:"A#."},
+  {s:2,q:"Identify the relative minor of F# major.",a:"D# minor."},
+  {s:2,q:"Which minor scale has the same ascending and descending notes as its relative major, just starting on a different note?",a:"The natural minor scale."},
+
+  // PART 4
+  {s:3,q:"What is the interval between C and the F# above it?",a:"Augmented 4th."},
+  {s:3,q:"What happens to a major interval when it is inverted?",a:"It becomes a minor interval."},
+  {s:3,q:"What is the interval between E and the Eb immediately above it?",a:"Diminished octave."},
+  {s:3,q:"Identify the compound interval of a major 9th as a simple interval.",a:"Major 2nd."},
+  {s:3,q:"What is the interval between F# and the Bb above it?",a:"Diminished 4th."},
+  {s:3,q:"What is a perfect 5th above B?",a:"F#."},
+  {s:3,q:"What is a minor 3rd below G?",a:"E."},
+  {s:3,q:"What happens to a perfect interval when it is inverted?",a:"It remains a perfect interval."},
+  {s:3,q:"Identify the interval between D and the C natural above it.",a:"Minor 7th."},
+  {s:3,q:"What is the inversion of an augmented 4th?",a:"Diminished 5th."},
+  {s:3,q:"What is a compound perfect 11th as a simple interval?",a:"Perfect 4th."},
+  {s:3,q:"What is an augmented 2nd above C?",a:"D#."},
+  {s:3,q:"Identify the interval between Ab and the Db above it.",a:"Perfect 4th."},
+  {s:3,q:"What is a diminished 5th above E?",a:"Bb."},
+  {s:3,q:"What is a major 7th below C?",a:"Db."},
+  {s:3,q:"What happens to a diminished interval when it is inverted?",a:"It becomes an augmented interval."},
+  {s:3,q:"Identify the interval between B and the F natural above it.",a:"Diminished 5th."},
+  {s:3,q:"What is the compound interval equivalent to an octave plus a major 3rd?",a:"Major 10th."},
+  {s:3,q:"If you invert a minor 6th, what interval do you get?",a:"Major 3rd."},
+  {s:3,q:"What is an augmented 6th above Eb?",a:"C#."},
+  {s:3,q:"What is a perfect 4th below F#?",a:"C#."},
+  {s:3,q:"Identify the interval between C# and the G natural above it.",a:"Diminished 5th."},
+  {s:3,q:"What is the distance in semitones of a minor 3rd?",a:"3 semitones."},
+  {s:3,q:"What is the interval between G and the F# above it?",a:"Major 7th."},
+  {s:3,q:"Identify the simple interval for a minor 13th.",a:"Minor 6th."},
+
+  // PART 5
+  {s:4,q:"What are the notes of chord IV in G major?",a:"C, E, G."},
+  {s:4,q:"In a Roman numeral system, what does chord Vb mean?",a:"The dominant chord (V) in first inversion — the 3rd of the chord is in the bass."},
+  {s:4,q:"What is the root of the chord F-A-C?",a:"F."},
+  {s:4,q:"Which two chords form a Perfect cadence?",a:"V to I."},
+  {s:4,q:"What is a Plagal cadence?",a:"A cadence moving from chord IV to chord I."},
+  {s:4,q:"Identify the notes in chord IIa in the key of D minor.",a:"E, G, Bb."},
+  {s:4,q:"Which cadence acts as a musical 'comma,' usually ending on chord V?",a:"Imperfect cadence."},
+  {s:4,q:"Name the notes of the dominant 7th chord (V7) in C major.",a:"G, B, D, F."},
+  {s:4,q:"What notes comprise chord Ic in Bb major?",a:"F, Bb, D — second inversion tonic, so the 5th (F) is in the bass."},
+  {s:4,q:"Which chord progression defines an Interrupted cadence?",a:"V to VI."},
+  {s:4,q:"What is the lowest note in chord VIb in F major?",a:"F — the chord is D minor (D-F-A); first inversion places the 3rd (F) in the bass."},
+  {s:4,q:"Identify the notes in chord Va in E minor.",a:"B, D#, F# — the leading note D# must be raised."},
+  {s:4,q:"What is the difference between a root position triad and a first inversion triad?",a:"Root position has the root note in the bass; first inversion has the 3rd of the chord in the bass."},
+  {s:4,q:"In the key of A major, what Roman numeral is given to the chord D-F#-A?",a:"IV (or IVa for root position)."},
+  {s:4,q:"What cadence is formed by the progression IV to I?",a:"Plagal cadence."},
+  {s:4,q:"Name the notes of the supertonic triad in Eb major.",a:"F, Ab, C."},
+  {s:4,q:"What notes make up the dominant 7th chord in G minor?",a:"D, F#, A, C."},
+  {s:4,q:"What is the bass note of chord IVc in C major?",a:"C — the chord is F-A-C; second inversion places the 5th (C) in the bass."},
+  {s:4,q:"Which chord frequently precedes chord V in a perfect cadence?",a:"Chord II, chord IV, or chord Ic (the cadential 6/4)."},
+  {s:4,q:"Identify the notes of chord III in B minor.",a:"D, F#, A."},
+  {s:4,q:"In a piece in F major, if a phrase ends with C major to F major, what cadence is it?",a:"Perfect cadence."},
+  {s:4,q:"What notes are in chord IIb in the key of A minor?",a:"D, F, B — the chord is B diminished (B-D-F); first inversion places the 3rd (D) in the bass."},
+  {s:4,q:"What cadence is formed by the progression V to VI?",a:"Interrupted cadence."},
+  {s:4,q:"Write the notes of chord Ib in Ab major.",a:"C, Eb, Ab."},
+  {s:4,q:"Which note must be raised by a semitone when writing chord V in a minor key?",a:"The leading note — the 3rd of the dominant chord."},
+
+  // PART 6
+  {s:5,q:"What does the German term Langsam mean?",a:"Slow."},
+  {s:5,q:"What does the French term Vite mean?",a:"Quick / Fast."},
+  {s:5,q:"Translate the Italian term Rubato.",a:"With some freedom of time/tempo — literally 'robbed time.'"},
+  {s:5,q:"Name the four standard instruments of the string family from highest to lowest.",a:"Violin, Viola, Cello, Double Bass."},
+  {s:5,q:"What is an appoggiatura?",a:"A 'leaning' grace note that takes half the value of the principal note it precedes."},
+  {s:5,q:"How does an acciaccatura differ visually from an appoggiatura?",a:"An acciaccatura has a diagonal slash through its stem."},
+  {s:5,q:"What does an upper mordent look like?",a:"A short, horizontal zig-zag line above the note."},
+  {s:5,q:"Which woodwind instrument uses a single reed and is typically made of brass?",a:"Saxophone."},
+  {s:5,q:"What does the German term Lebhaft mean?",a:"Lively."},
+  {s:5,q:"Translate the French term Douce.",a:"Sweet."},
+  {s:5,q:"What does the Italian term Senza mean?",a:"Without."},
+  {s:5,q:"Name the four standard families of the orchestra.",a:"Strings, Woodwind, Brass, Percussion."},
+  {s:5,q:"Which brass instrument uses a slide instead of valves?",a:"Trombone."},
+  {s:5,q:"What does the term Schnell mean?",a:"Fast."},
+  {s:5,q:"Identify the symbol for a turn.",a:"An 'S' shape lying on its side (∞ or ~), placed above the note."},
+  {s:5,q:"What is the difference between a timpani and a snare drum?",a:"Timpani is a tuned instrument that produces specific pitches; the snare drum is untuned (unpitched)."},
+  {s:5,q:"Translate the term Scherzando.",a:"Playfully / joking."},
+  {s:5,q:"What does the French term Retenu mean?",a:"Held back — slowing down."},
+  {s:5,q:"What does con sordino tell a string player to do?",a:"Play with a mute."},
+  {s:5,q:"What does the term arco mean?",a:"Play with the bow."},
+  {s:5,q:"Translate the German term Traurig.",a:"Sad."},
+  {s:5,q:"What does the symbol 8va indicate when placed above the staff?",a:"Play an octave higher than written."},
+  {s:5,q:"Which instrument is considered the lowest of the standard woodwind family?",a:"Bassoon (or Contrabassoon)."},
+  {s:5,q:"Translate the Italian term Morendo.",a:"Dying away."},
+  {s:5,q:"What does the French term Mouvement (or au mouvement) mean?",a:"Return to the original tempo / in time."}
+];
+
+// ═══════════════════════════════════════════════
+//  STATE
+// ═══════════════════════════════════════════════
+let quizQuestions = [];
+let quizIndex = 0;
+let quizCorrect = 0;
+let quizWrong = 0;
+let missedQs = [];
+let timerInterval = null;
+let timerSeconds = 0;
+let timerMax = 0;
+let startTime = null;
+let totalQuizTime = 0;
+let quizConfig = { count: 10, topic: 'all', timer: 0 };
+
+let fcList = [...QS.map((_,i)=>i)];
+let fcIndex = 0;
+let fcFlipped = false;
+
+let bestScore = null;
+let quizCount = 0;
+
+// ═══════════════════════════════════════════════
+//  NAVIGATION
+// ═══════════════════════════════════════════════
+function show(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+function goHome() {
+  clearTimer();
+  show('home');
+  document.getElementById('home-quizzes').textContent = quizCount;
+  document.getElementById('home-score').textContent = bestScore !== null ? bestScore + '%' : '—';
+}
+
+// ═══════════════════════════════════════════════
+//  SECTION SELECT
+// ═══════════════════════════════════════════════
+function showSectionSelect() {
+  const container = document.getElementById('section-list-btns');
+  container.innerHTML = '';
+  SECTIONS.forEach((s, i) => {
+    const count = QS.filter(q => q.s === i).length;
+    const btn = document.createElement('button');
+    btn.className = 'section-btn';
+    btn.innerHTML = `<span class="section-num">P${i+1}</span><span>${s}</span><span class="section-count">${count} Q</span>`;
+    btn.onclick = () => { showStudy(i); };
+    container.appendChild(btn);
+  });
+  show('section-select');
+}
+
+// ═══════════════════════════════════════════════
+//  STUDY MODE
+// ═══════════════════════════════════════════════
+function showStudy(sectionFilter) {
+  const isAll = sectionFilter === 'all';
+  document.getElementById('study-title').textContent = isAll ? 'Study All Questions' : SECTIONS[sectionFilter];
+  const filtered = isAll ? QS : QS.filter(q => q.s === sectionFilter);
+  document.getElementById('study-badge').textContent = filtered.length + ' Q';
+  document.getElementById('search-input').value = '';
+
+  renderStudyList(filtered);
+  show('study');
+}
+
+function renderStudyList(questions) {
+  const container = document.getElementById('study-list');
+  container.innerHTML = '';
+
+  let lastSection = null;
+  questions.forEach((q, idx) => {
+    const globalIdx = QS.indexOf(q);
+
+    if (q.s !== lastSection) {
+      lastSection = q.s;
+      const header = document.createElement('div');
+      header.className = 'section-header';
+      header.innerHTML = `<span class="part-label">PART ${q.s + 1}</span>${SECTIONS[q.s]}`;
+      container.appendChild(header);
+    }
+
+    const card = document.createElement('div');
+    card.className = 'q-card';
+    card.dataset.idx = globalIdx;
+
+    const correctedBadge = q.corrected ? `<span class="corrected-note">CORRECTED</span>` : '';
+    card.innerHTML = `
+      <div class="q-front" onclick="toggleCard(this.parentElement)">
+        <span class="q-num">Q${String(globalIdx+1).padStart(3,'0')}</span>
+        <span class="q-text">${q.q}${correctedBadge}</span>
+        <span class="q-toggle">▾</span>
+      </div>
+      <div class="q-answer">
+        <div class="answer-label">▸ ANSWER</div>
+        <div class="answer-text">${q.a}</div>
+      </div>`;
+    container.appendChild(card);
+  });
+}
+
+function toggleCard(card) {
+  const answer = card.querySelector('.q-answer');
+  const isOpen = card.classList.contains('open');
+  card.classList.toggle('open', !isOpen);
+  answer.classList.toggle('visible', !isOpen);
+}
+
+function expandAll() {
+  document.querySelectorAll('#study-list .q-card').forEach(c => {
+    c.classList.add('open');
+    c.querySelector('.q-answer').classList.add('visible');
+  });
+}
+
+function collapseAll() {
+  document.querySelectorAll('#study-list .q-card').forEach(c => {
+    c.classList.remove('open');
+    c.querySelector('.q-answer').classList.remove('visible');
+  });
+}
+
+function filterStudy() {
+  const term = document.getElementById('search-input').value.toLowerCase().trim();
+  const allCards = document.querySelectorAll('#study-list .q-card');
+  const headers = document.querySelectorAll('#study-list .section-header');
+
+  if (!term) {
+    allCards.forEach(c => c.style.display = '');
+    headers.forEach(h => h.style.display = '');
+    return;
+  }
+
+  headers.forEach(h => h.style.display = 'none');
+
+  allCards.forEach(card => {
+    const idx = parseInt(card.dataset.idx);
+    const q = QS[idx];
+    const match = q.q.toLowerCase().includes(term) || q.a.toLowerCase().includes(term);
+    card.style.display = match ? '' : 'none';
+  });
+}
+
+// ═══════════════════════════════════════════════
+//  QUIZ SETUP
+// ═══════════════════════════════════════════════
+function showQuizSetup() {
+  clearTimer();
+  show('quiz-setup');
+}
+
+function setPill(el, group) {
+  el.closest('.pill-group').querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
+  el.classList.add('active');
+  const map = { qcount: 'count', qtopic: 'topic', qtimer: 'timer' };
+  let val = el.dataset.val;
+  if (group === 'qcount') val = parseInt(val);
+  if (group === 'qtimer') val = parseInt(val);
+  quizConfig[map[group]] = val;
+}
+
+function startQuiz() {
+  clearTimer();
+
+  let pool = QS.map((q, i) => ({ ...q, _idx: i }));
+  if (quizConfig.topic !== 'all') {
+    pool = pool.filter(q => q.s === parseInt(quizConfig.topic));
+  }
+
+  // Shuffle
+  for (let i = pool.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [pool[i], pool[j]] = [pool[j], pool[i]];
+  }
+
+  quizQuestions = pool.slice(0, Math.min(quizConfig.count, pool.length));
+  quizIndex = 0;
+  quizCorrect = 0;
+  quizWrong = 0;
+  missedQs = [];
+  startTime = Date.now();
+
+  show('quiz');
+  renderQuizQuestion();
+}
+
+// ═══════════════════════════════════════════════
+//  QUIZ
+// ═══════════════════════════════════════════════
+function renderQuizQuestion() {
+  if (quizIndex >= quizQuestions.length) {
+    finishQuiz();
+    return;
+  }
+
+  const q = quizQuestions[quizIndex];
+  const total = quizQuestions.length;
+  const pct = (quizIndex / total) * 100;
+
+  document.getElementById('quiz-prog-fill').style.width = pct + '%';
+  document.getElementById('quiz-counter').textContent = `${quizIndex + 1} / ${total}`;
+  document.getElementById('quiz-section-tag').textContent = SECTIONS[q.s];
+  document.getElementById('quiz-q-num').textContent = `#${q._idx + 1}`;
+  document.getElementById('quiz-question').textContent = q.q;
+  document.getElementById('quiz-answer-text').textContent = q.a;
+
+  const revealEl = document.getElementById('answer-reveal');
+  revealEl.classList.remove('shown');
+  document.getElementById('reveal-btn').style.display = 'block';
+
+  // Animate card
+  const card = document.getElementById('quiz-card');
+  card.style.animation = 'none';
+  card.offsetHeight;
+  card.style.animation = 'cardIn 0.35s ease';
+
+  // Timer
+  clearTimer();
+  if (quizConfig.timer > 0) {
+    timerMax = quizConfig.timer;
+    timerSeconds = quizConfig.timer;
+    updateTimerDisplay();
+    timerInterval = setInterval(() => {
+      timerSeconds--;
+      updateTimerDisplay();
+      if (timerSeconds <= 0) {
+        clearTimer();
+        revealAnswer();
+      }
+    }, 1000);
+  } else {
+    document.getElementById('timer-display').textContent = '';
+  }
+}
+
+function updateTimerDisplay() {
+  const el = document.getElementById('timer-display');
+  el.textContent = timerSeconds + 's';
+  el.classList.toggle('warning', timerSeconds <= 10 && quizConfig.timer > 0);
+}
+
+function clearTimer() {
+  if (timerInterval) { clearInterval(timerInterval); timerInterval = null; }
+}
+
+function revealAnswer() {
+  clearTimer();
+  document.getElementById('reveal-btn').style.display = 'none';
+  document.getElementById('answer-reveal').classList.add('shown');
+  document.getElementById('timer-display').textContent = '';
+}
+
+function judgeAnswer(correct) {
+  if (correct) {
+    quizCorrect++;
+  } else {
+    quizWrong++;
+    missedQs.push(quizQuestions[quizIndex]);
+  }
+  quizIndex++;
+  renderQuizQuestion();
+}
+
+function finishQuiz() {
+  totalQuizTime = Math.round((Date.now() - startTime) / 1000);
+  const total = quizCorrect + quizWrong;
+  const pct = total > 0 ? Math.round((quizCorrect / total) * 100) : 0;
+
+  quizCount++;
+  if (bestScore === null || pct > bestScore) bestScore = pct;
+
+  document.getElementById('res-pct').textContent = pct + '%';
+  document.getElementById('res-correct').textContent = quizCorrect;
+  document.getElementById('res-wrong').textContent = quizWrong;
+
+  const mins = Math.floor(totalQuizTime / 60);
+  const secs = totalQuizTime % 60;
+  document.getElementById('res-time').textContent = `${mins}:${String(secs).padStart(2,'0')}`;
+
+  if (pct >= 80) {
+    document.getElementById('res-title').textContent = 'Excellent Work! 🎼';
+    document.getElementById('res-sub').textContent = 'You\'re well prepared for exam day.';
+  } else if (pct >= 60) {
+    document.getElementById('res-title').textContent = 'Good Effort! 🎵';
+    document.getElementById('res-sub').textContent = 'Review the missed questions and try again.';
+  } else {
+    document.getElementById('res-title').textContent = 'Keep Practising ♩';
+    document.getElementById('res-sub').textContent = 'Focus on the weaker areas below.';
+  }
+
+  const missedSection = document.getElementById('missed-section');
+  const missedList = document.getElementById('missed-list');
+  missedList.innerHTML = '';
+  if (missedQs.length > 0) {
+    missedSection.style.display = 'block';
+    missedQs.forEach(q => {
+      const d = document.createElement('div');
+      d.className = 'missed-item';
+      d.innerHTML = `<div class="missed-q">Q${q._idx+1} · ${SECTIONS[q.s]}</div><div>${q.q}</div>`;
+      missedList.appendChild(d);
+    });
+  } else {
+    missedSection.style.display = 'none';
+  }
+
+  show('results');
+}
+
+function reviewMissed() {
+  if (missedQs.length === 0) return;
+  const container = document.getElementById('study-list');
+  container.innerHTML = '';
+  document.getElementById('study-title').textContent = 'Reviewing Missed Questions';
+  document.getElementById('study-badge').textContent = missedQs.length + ' Q';
+  document.getElementById('search-input').value = '';
+  renderStudyList(missedQs.map(q => ({ ...q })));
+  show('study');
+}
+
+// ═══════════════════════════════════════════════
+//  FLASHCARDS
+// ═══════════════════════════════════════════════
+function showFlashcards(filter) {
+  if (filter === 'all') {
+    fcList = QS.map((_,i) => i);
+  } else {
+    fcList = QS.reduce((acc, q, i) => { if (q.s === filter) acc.push(i); return acc; }, []);
+  }
+  fcIndex = 0;
+  fcFlipped = false;
+  renderFlashcard();
+  show('flashcard');
+}
+
+function renderFlashcard() {
+  const idx = fcList[fcIndex];
+  const q = QS[idx];
+  document.getElementById('fc-question').textContent = q.q;
+  document.getElementById('fc-answer').textContent = q.a;
+  document.getElementById('fc-pos').textContent = `${fcIndex+1}/${fcList.length}`;
+  document.getElementById('fc-badge').textContent = `${fcIndex+1} / ${fcList.length}`;
+  document.getElementById('fc-wrap').classList.remove('flipped');
+  fcFlipped = false;
+}
+
+function flipCard() {
+  fcFlipped = !fcFlipped;
+  document.getElementById('fc-wrap').classList.toggle('flipped', fcFlipped);
+}
+
+function fcNav(dir) {
+  fcIndex = (fcIndex + dir + fcList.length) % fcList.length;
+  renderFlashcard();
+}
+
+function shuffleCards() {
+  for (let i = fcList.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [fcList[i], fcList[j]] = [fcList[j], fcList[i]];
+  }
+  fcIndex = 0;
+  renderFlashcard();
+}
+
+function resetCards() {
+  fcList = QS.map((_,i)=>i);
+  fcIndex = 0;
+  renderFlashcard();
+}
+
+// ═══════════════════════════════════════════════
+//  KEYBOARD SHORTCUTS
+// ═══════════════════════════════════════════════
+document.addEventListener('keydown', e => {
+  const active = document.querySelector('.screen.active');
+  if (!active) return;
+  const id = active.id;
+
+  if (id === 'quiz') {
+    if (e.key === ' ' || e.key === 'Enter') {
+      const revealEl = document.getElementById('answer-reveal');
+      if (!revealEl.classList.contains('shown')) { revealAnswer(); }
+    }
+    if (e.key === 'ArrowRight' || e.key === 'y') {
+      const revealEl = document.getElementById('answer-reveal');
+      if (revealEl.classList.contains('shown')) judgeAnswer(true);
+    }
+    if (e.key === 'ArrowLeft' || e.key === 'n') {
+      const revealEl = document.getElementById('answer-reveal');
+      if (revealEl.classList.contains('shown')) judgeAnswer(false);
+    }
+  }
+
+  if (id === 'flashcard') {
+    if (e.key === 'ArrowRight') fcNav(1);
+    if (e.key === 'ArrowLeft') fcNav(-1);
+    if (e.key === ' ') { e.preventDefault(); flipCard(); }
+  }
+});
+
+// Init
+goHome();
+</script>
+</body>
+</html>
